@@ -1,8 +1,14 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 public class EvaluationService {
 
@@ -15,7 +21,7 @@ public class EvaluationService {
 	 */
 	public String reverse(String string) {
 		char[] reversed = new char[string.length()];
-		for (int i = reversed.length - 1, j=0; i >= 0; i--, j++) {
+		for (int i = reversed.length - 1, j = 0; i >= 0; i--, j++) {
 			reversed[j] = string.charAt(i);
 		}
 		return new String(reversed);
@@ -30,8 +36,28 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		// creating the variable and setting it to ""
+		String acronym = "";
+		// creating the array and making it so that it splits the string into an index
+		// of the array at each space.
+		String array[] = phrase.split(" ");
+		// using an enhanced for loop for convenience and because I only need to
+		// increment by one.
+		for (String arr : array) {
+			// Here is where the array looks at the char in index 0 of each word and adds
+			// that to acronym.
+			acronym += arr.charAt(0);
+			// this if statement is just checking for - and if there is one then it just
+			// skips over it and moves to the next one.
+			if (arr.contains("-")) {
+				acronym += arr.charAt(arr.indexOf('-') + 1);
+			}
+		}
+		// setting all acronyms to upper case so that when they return they meet the
+		// test requirements.
+		acronym = acronym.toUpperCase();
+
+		return acronym;
 	}
 
 	/**
@@ -84,17 +110,26 @@ public class EvaluationService {
 		}
 
 		public boolean isEquilateral() {
-			// TODO Write an implementation for this method declaration
+			// compares if all three sides are equal.
+			if (getSideOne() == getSideTwo() && getSideOne() == getSideThree()) {
+				return true;
+			}
 			return false;
 		}
 
 		public boolean isIsosceles() {
-			// TODO Write an implementation for this method declaration
+			// compares if at least two sides are equal.
+			if (getSideOne() == getSideTwo() || getSideOne() == getSideThree() || getSideTwo() == getSideThree()) {
+				return true;
+			}
 			return false;
 		}
 
 		public boolean isScalene() {
-			// TODO Write an implementation for this method declaration
+			// compares if none of the sides are equal.
+			if (getSideOne() != getSideTwo() && getSideTwo() != getSideThree() && getSideThree() != getSideOne()) {
+				return true;
+			}
 			return false;
 		}
 
@@ -116,8 +151,46 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getScrabbleScore(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+		// creating a hashmap to store each letter in.
+		Map<Character, Integer> score = new HashMap<Character, Integer>();
+		// adding each letter and its value to the map.
+		score.put('A', new Integer(1));
+		score.put('B', new Integer(3));
+		score.put('C', new Integer(3));
+		score.put('D', new Integer(2));
+		score.put('E', new Integer(1));
+		score.put('F', new Integer(4));
+		score.put('G', new Integer(2));
+		score.put('H', new Integer(4));
+		score.put('I', new Integer(1));
+		score.put('J', new Integer(8));
+		score.put('K', new Integer(5));
+		score.put('L', new Integer(1));
+		score.put('M', new Integer(3));
+		score.put('N', new Integer(1));
+		score.put('O', new Integer(1));
+		score.put('P', new Integer(3));
+		score.put('Q', new Integer(10));
+		score.put('R', new Integer(1));
+		score.put('S', new Integer(1));
+		score.put('T', new Integer(1));
+		score.put('U', new Integer(1));
+		score.put('V', new Integer(4));
+		score.put('W', new Integer(4));
+		score.put('X', new Integer(8));
+		score.put('Y', new Integer(4));
+		score.put('Z', new Integer(10));
+		score.put(' ', new Integer(0));
+
+		// Initializing the int that will store the score value.
+		int isScore = 0;
+		// for loop to loop through the string and add the value of each character to
+		// the total score.
+		for (int i = 0; i < string.length(); i++) {
+			isScore += score.get(Character.toUpperCase(string.charAt(i)));
+		}
+
+		return isScore;
 	}
 
 	/**
@@ -152,8 +225,24 @@ public class EvaluationService {
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
 	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		// replacing all characters and spaces that are not needed.
+		String newString = string.replaceAll("[\\.|\\-|\\s|\\(|\\)]+", "");
+		// checks to see if the string is larger than 11 if it is throws an exception
+		if (newString.length() > 11)
+			throw new IllegalArgumentException();
+		// creating a pattern variable and then setting it equal to non digits.
+		Pattern notANumber = Pattern.compile("[\\D]+");
+		// using the pattern matter on the string to find the non digits if there are
+		// any throws an exception.
+		if (notANumber.matcher(newString).find()) {
+			throw new IllegalArgumentException();
+		}
+		// if the string starts with a one replace it with nothing
+		if (newString.matches("^1\\d")) {
+			newString = newString.replace("1", "");
+		}
+		return newString;
+
 	}
 
 	/**
@@ -165,9 +254,28 @@ public class EvaluationService {
 	 * @param string
 	 * @return
 	 */
+
 	public Map<String, Integer> wordCount(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		// creating a new hashmap
+		Map<String, Integer> wordmap = new HashMap<String, Integer>();
+		// if the string contains a special character then replace it with nothing
+		if (string.contains(",")) {
+			string = string.replaceAll("[\\,|\\\n]+", " ");
+		}
+		// creating a string array that is equal to the string split by spaces
+		String[] words = string.split(" ");
+		// loop through the array
+		for (int i = 0; i < words.length; i++) {
+			// count the number of times each word is present and assign a value to it
+			if (wordmap.containsKey(words[i])) {
+				int count = wordmap.get(words[i]);
+				wordmap.replace(words[i], ++count);
+			}
+			wordmap.putIfAbsent(words[i], new Integer(1));
+
+		}
+		return wordmap;
+
 	}
 
 	/**
@@ -209,13 +317,14 @@ public class EvaluationService {
 		private List<T> sortedList;
 
 		public int indexOf(T t) {
-			// TODO Write an implementation for this method declaration
+
 			return 0;
 		}
 
 		public BinarySearch(List<T> sortedList) {
 			super();
 			this.sortedList = sortedList;
+
 		}
 
 		public List<T> getSortedList() {
@@ -246,8 +355,27 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String toPigLatin(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		//if the word starts with a vowel set this pattern. 
+		Pattern vowels = Pattern.compile("^([aeiou])");
+		//if the word starts with "qu", one or more cons, or y followed by a vowel
+		Pattern cons = Pattern.compile("^([qu]+|[^aeiouy]+|y(?=[aeiou]))");
+		String result = "";
+		for (String word : string.split(" ")) {
+			// if the word starts with a vowel take that word and assign it to result to latter have "ay" added to the end.
+			if (vowels.matcher(word).find()) {
+				result += word;
+			}
+			//if the word does not start with a vowel then find the cons and if there is a match then go in to the if statement.
+			else {
+				Matcher match = cons.matcher(word);
+				if (match.find())
+					// set result to everything after con, add it on the end, then add ay.
+					result += word.substring(match.end()) + match.group();
+			}
+			// add ay to the end
+			result += "ay ";
+		}
+		return result.substring(0, result.length() - 1);
 	}
 
 	/**
@@ -266,7 +394,17 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isArmstrongNumber(int input) {
-		// TODO Write an implementation for this method declaration
+		String number = Integer.toString(input);
+		char[] numbA = number.toCharArray();
+		int toPower = numbA.length;
+		int total = 0;
+		for (int i = 0; i < numbA.length; i++) {
+			int digit = Character.getNumericValue(numbA[i]);
+			total += (int) Math.pow(digit, toPower);
+		}
+		if (total == input) {
+			return true;
+		}
 		return false;
 	}
 
@@ -281,8 +419,22 @@ public class EvaluationService {
 	 * @return
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		// creating a list of type long and setting it equal to a new array list of type
+		// long.
+		List<Long> primenumb = new ArrayList<Long>();
+		// standard for loop with a long variable instead of a int.
+		for (long i = 2; i <= l; i++) {
+			// a while loop to loop through as long as the modulus comes out to 0.
+			while (l % i == 0) {
+				// if the modulus of i come out to 0 then add the number to the list
+				primenumb.add(i);
+				// same as l = l/i;
+				l /= i;
+
+			}
+		}
+		return primenumb;
+
 	}
 
 	/**
@@ -376,8 +528,208 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String encode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			String str2 = string.replaceAll("[\\,\\.]+", "").toLowerCase();
+			String[] input = str2.split(" ");
+			String trans = "";
+			Map<Integer, Character> charMap1 = new HashMap<Integer, Character>();
+			
+			charMap1.put(1, 'a');
+			charMap1.put(2, 'b');
+			charMap1.put(3, 'c');
+			charMap1.put(4, 'd');
+			charMap1.put(5, 'e');
+			charMap1.put(6, 'f');
+			charMap1.put(7, 'g');
+			charMap1.put(8, 'h');
+			charMap1.put(9, 'i');
+			charMap1.put(10, 'j');
+			charMap1.put(11, 'k');
+			charMap1.put(12, 'l');
+			charMap1.put(13, 'm');
+			charMap1.put(14, 'n');
+			charMap1.put(15, 'o');
+			charMap1.put(16, 'p');
+			charMap1.put(17, 'q');
+			charMap1.put(18, 'r');
+			charMap1.put(19, 's');
+			charMap1.put(20, 't');
+			charMap1.put(21, 'u');
+			charMap1.put(22, 'v');
+			charMap1.put(23, 'w');
+			charMap1.put(24, 'x');
+			charMap1.put(25, 'y');
+			charMap1.put(26, 'z');
+			
+			for(int i = 0; i < input.length; i++) {
+				char[] charA = input[i].toCharArray();
+				for(int j = 0; j < charA.length; j++) {
+					if(Character.isDigit(charA[j])) {
+						trans += charA[j];
+					}
+					switch(charA[j]) {
+					case 'a':
+						trans += charMap1.get(26);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'b':
+						trans += charMap1.get(25);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'c':
+						trans += charMap1.get(24);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'd':
+						trans += charMap1.get(23);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'e':
+						trans += charMap1.get(22);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'f':
+						trans += charMap1.get(21);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'g':
+						trans += charMap1.get(20);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'h':
+						trans += charMap1.get(19);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'i':
+						trans += charMap1.get(18);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'j':
+						trans += charMap1.get(17);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'k':
+						trans += charMap1.get(16);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'l':
+						trans += charMap1.get(15);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'm':
+						trans += charMap1.get(14);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'n':
+						trans += charMap1.get(13);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'o':
+						trans += charMap1.get(12);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'p':
+						trans += charMap1.get(11);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'q':
+						trans += charMap1.get(10);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'r':
+						trans += charMap1.get(9);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 's':
+						trans += charMap1.get(8);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 't':
+						trans += charMap1.get(7);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'u':
+						trans += charMap1.get(6);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'v':
+						trans += charMap1.get(5);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'w':
+						trans += charMap1.get(4);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'x':
+						trans += charMap1.get(3);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'y':
+						trans += charMap1.get(2);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					case 'z':
+						trans += charMap1.get(1);
+						if(j == charA.length - 1) {
+							trans += " ";
+						}
+						break;
+					}
+				}
+			}
+			String trans2 = trans.replace(" ", "");
+			String trans3 = trans2.replaceAll(".....(?!$)", "$0 ");
+			
+			return trans3;
 		}
 
 		/**
@@ -387,8 +739,125 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String decode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			String decode = string.replaceAll(" ", "");
+			char[] charA = decode.toCharArray();
+			String trans = "";
+			Map<Integer, Character> charMap1 = new HashMap<Integer, Character>();
+			
+			charMap1.put(1, 'a');
+			charMap1.put(2, 'b');
+			charMap1.put(3, 'c');
+			charMap1.put(4, 'd');
+			charMap1.put(5, 'e');
+			charMap1.put(6, 'f');
+			charMap1.put(7, 'g');
+			charMap1.put(8, 'h');
+			charMap1.put(9, 'i');
+			charMap1.put(10, 'j');
+			charMap1.put(11, 'k');
+			charMap1.put(12, 'l');
+			charMap1.put(13, 'm');
+			charMap1.put(14, 'n');
+			charMap1.put(15, 'o');
+			charMap1.put(16, 'p');
+			charMap1.put(17, 'q');
+			charMap1.put(18, 'r');
+			charMap1.put(19, 's');
+			charMap1.put(20, 't');
+			charMap1.put(21, 'u');
+			charMap1.put(22, 'v');
+			charMap1.put(23, 'w');
+			charMap1.put(24, 'x');
+			charMap1.put(25, 'y');
+			charMap1.put(26, 'z');
+			
+			
+			for(int i = 0; i < charA.length; i++) {
+				if(Character.isDigit(charA[i])) {
+					trans += charA[i];
+				}
+				switch(charA[i]) {
+				case 'a':
+					trans += charMap1.get(26);
+					break;
+				case 'b':
+					trans += charMap1.get(25);
+					break;
+				case 'c':
+					trans += charMap1.get(24);
+					break;
+				case 'd':
+					trans += charMap1.get(23);
+					break;
+				case 'e':
+					trans += charMap1.get(22);
+					break;
+				case 'f':
+					trans += charMap1.get(21);
+					break;
+				case 'g':
+					trans += charMap1.get(20);
+					break;
+				case 'h':
+					trans += charMap1.get(19);
+					break;
+				case 'i':
+					trans += charMap1.get(18);
+					break;
+				case 'j':
+					trans += charMap1.get(17);
+					break;
+				case 'k':
+					trans += charMap1.get(16);
+					break;
+				case 'l':
+					trans += charMap1.get(15);
+					break;
+				case 'm':
+					trans += charMap1.get(14);
+					break;
+				case 'n':
+					trans += charMap1.get(13);
+					break;
+				case 'o':
+					trans += charMap1.get(12);
+					break;
+				case 'p':
+					trans += charMap1.get(11);
+					break;
+				case 'q':
+					trans += charMap1.get(10);
+					break;
+				case 'r':
+					trans += charMap1.get(9);
+					break;
+				case 's':
+					trans += charMap1.get(8);
+					break;
+				case 't':
+					trans += charMap1.get(7);
+					break;
+				case 'u':
+					trans += charMap1.get(6);
+					break;
+				case 'v':
+					trans += charMap1.get(5);
+					break;
+				case 'w':
+					trans += charMap1.get(4);
+					break;
+				case 'x':
+					trans += charMap1.get(3);
+					break;
+				case 'y':
+					trans += charMap1.get(2);
+					break;
+				case 'z':
+					trans += charMap1.get(1);
+					break;
+				}
+			}
+			return trans;
 		}
 	}
 
@@ -415,8 +884,106 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isValidIsbn(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		String input = string.replaceAll("\\-", "");
+		char[] sA = input.toCharArray();
+		int[] intA = new int[10];
+		boolean bool = false, used = false, used1 = false, used2 = false, used3 = false, used4 = false, used5 = false, used6 = false, used7 = false, used8 = false, used9 = false;
+		
+		for(int i = 0; i < sA.length; i++) {
+			String charToStr = String.valueOf(sA[i]);
+			if(charToStr.matches("[0-9]")) {
+				if(intA[0] == 0 && used == false) {
+					intA[0] = Integer.parseInt(charToStr);
+					used = true;
+				}
+				else if(intA[1] == 0 && used1 == false) {
+					intA[1] = Integer.parseInt(charToStr);
+					used1 = true;
+				}
+				else if(intA[2] == 0 && used2 == false) {
+					intA[2] = Integer.parseInt(charToStr);
+					used2 = true;
+				}
+				else if(intA[3] == 0 && used3 == false) {
+					intA[3] = Integer.parseInt(charToStr);
+					used3 = true;
+				}
+				else if(intA[4] == 0 && used4 == false) {
+					intA[4] = Integer.parseInt(charToStr);
+					used4 = true;
+				}
+				else if(intA[5] == 0 && used5 == false) {
+					intA[5] = Integer.parseInt(charToStr);
+					used5 = true;
+				}
+				else if(intA[6] == 0 && used6 == false) {
+					intA[6] = Integer.parseInt(charToStr);
+					used6 = true;
+				}
+				else if(intA[7] == 0 && used7 == false) {
+					intA[7] = Integer.parseInt(charToStr);
+					used7 = true;
+				}
+				else if(intA[8] == 0 && used8 == false) {
+					intA[8] = Integer.parseInt(charToStr);
+					used8 = true;
+				}
+				else if(intA[9] == 0 && used9 == false) {
+					intA[9] = Integer.parseInt(charToStr);
+					used9 = true;
+				}
+			}
+			else if(charToStr.matches("X")) {
+				if(intA[0] == 0 && used == false) {
+					intA[0] = 10;
+					used = true;
+				}
+				else if(intA[1] == 0 && used1 == false) {
+					intA[1] = 10;
+					used1 = true;
+				}
+				else if(intA[2] == 0 && used2 == false) {
+					intA[2] = 10;
+					used2 = true;
+				}
+				else if(intA[3] == 0 && used3 == false) {
+					intA[3] = 10;
+					used3 = true;
+				}
+				else if(intA[4] == 0 && used4 == false) {
+					intA[4] = 10;
+					used4 = true;
+				}
+				else if(intA[5] == 0 && used5 == false) {
+					intA[5] = 10;
+					used5 = true;
+				}
+				else if(intA[6] == 0 && used6 == false) {
+					intA[6] = 10;
+					used6 = true;
+				}
+				else if(intA[7] == 0 && used7 == false) {
+					intA[7] = 10;
+					used7 = true;
+				}
+				else if(intA[8] == 0 && used8 == false) {
+					intA[0] = 10;
+					used8 = true;
+				}
+				else if(intA[9] == 0 && used9 == false) {
+					intA[9] = 10;
+					used9 = true;
+				}
+			}
+			System.out.println(intA[i]);
+		}
+		int result = (intA[0] * 10 + intA[1] * 9 + intA[2] * 8 + intA[3] * 7 + intA[4] * 6 + intA[5] * 5 + intA[6] * 4 + intA[7] * 3 + intA[8] * 2 + intA[9] * 1) % 11;
+		System.out.println("this is the result: " + result);
+		if(result == 0) {
+			bool = true;
+		}
+		System.out.println(bool);
+		return bool;
 	}
 
 	/**
@@ -433,7 +1000,177 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isPangram(String string) {
-		// TODO Write an implementation for this method declaration
+		Map<Integer, Character> charMap1 = new HashMap<Integer, Character>();
+		Map<Integer, Character> charMap2 = new HashMap<Integer, Character>();
+		char[] stringA = string.toCharArray();
+
+		charMap1.put(1, 'a');
+		charMap1.put(2, 'b');
+		charMap1.put(3, 'c');
+		charMap1.put(4, 'd');
+		charMap1.put(5, 'e');
+		charMap1.put(6, 'f');
+		charMap1.put(7, 'g');
+		charMap1.put(8, 'h');
+		charMap1.put(9, 'i');
+		charMap1.put(10, 'j');
+		charMap1.put(11, 'k');
+		charMap1.put(12, 'l');
+		charMap1.put(13, 'm');
+		charMap1.put(14, 'n');
+		charMap1.put(15, 'o');
+		charMap1.put(16, 'p');
+		charMap1.put(17, 'q');
+		charMap1.put(18, 'r');
+		charMap1.put(19, 's');
+		charMap1.put(20, 't');
+		charMap1.put(21, 'u');
+		charMap1.put(22, 'v');
+		charMap1.put(23, 'w');
+		charMap1.put(24, 'x');
+		charMap1.put(25, 'y');
+		charMap1.put(26, 'z');
+
+		for (int i = 0; i < stringA.length; i++) {
+			char letter = stringA[i];
+			switch (letter) {
+			case 'a':
+				if (!(charMap2.containsKey(1))) {
+					charMap2.put(1, 'a');
+				}
+				break;
+			case 'b':
+				if (!(charMap2.containsKey(2))) {
+					charMap2.put(2, 'b');
+				}
+				break;
+			case 'c':
+				if (!(charMap2.containsKey(3))) {
+					charMap2.put(3, 'c');
+				}
+				break;
+			case 'd':
+				if (!(charMap2.containsKey(4))) {
+					charMap2.put(4, 'd');
+				}
+				break;
+			case 'e':
+				if (!(charMap2.containsKey(5))) {
+					charMap2.put(5, 'e');
+				}
+				break;
+			case 'f':
+				if (!(charMap2.containsKey(6))) {
+					charMap2.put(6, 'f');
+				}
+				break;
+			case 'g':
+				if (!(charMap2.containsKey(7))) {
+					charMap2.put(7, 'g');
+				}
+				break;
+			case 'h':
+				if (!(charMap2.containsKey(8))) {
+					charMap2.put(8, 'h');
+				}
+				break;
+			case 'i':
+				if (!(charMap2.containsKey(9))) {
+					charMap2.put(9, 'i');
+				}
+				break;
+			case 'j':
+				if (!(charMap2.containsKey(10))) {
+					charMap2.put(10, 'j');
+				}
+				break;
+			case 'k':
+				if (!(charMap2.containsKey(11))) {
+					charMap2.put(11, 'k');
+				}
+				break;
+			case 'l':
+				if (!(charMap2.containsKey(12))) {
+					charMap2.put(12, 'l');
+				}
+				break;
+			case 'm':
+				if (!(charMap2.containsKey(13))) {
+					charMap2.put(13, 'm');
+				}
+				break;
+			case 'n':
+				if (!(charMap2.containsKey(14))) {
+					charMap2.put(14, 'n');
+				}
+				break;
+			case 'o':
+				if (!(charMap2.containsKey(15))) {
+					charMap2.put(15, 'o');
+				}
+				break;
+			case 'p':
+				if (!(charMap2.containsKey(16))) {
+					charMap2.put(16, 'p');
+				}
+				break;
+			case 'q':
+				if (!(charMap2.containsKey(17))) {
+					charMap2.put(17, 'q');
+				}
+				break;
+			case 'r':
+				if (!(charMap2.containsKey(18))) {
+					charMap2.put(18, 'r');
+				}
+				break;
+			case 's':
+				if (!(charMap2.containsKey(19))) {
+					charMap2.put(19, 's');
+				}
+				break;
+			case 't':
+				if (!(charMap2.containsKey(20))) {
+					charMap2.put(20, 't');
+				}
+				break;
+			case 'u':
+				if (!(charMap2.containsKey(21))) {
+					charMap2.put(21, 'u');
+				}
+				break;
+			case 'v':
+				if (!(charMap2.containsKey(22))) {
+					charMap2.put(22, 'v');
+				}
+				break;
+			case 'w':
+				if (!(charMap2.containsKey(23))) {
+					charMap2.put(23, 'w');
+				}
+				break;
+			case 'x':
+				if (!(charMap2.containsKey(24))) {
+					charMap2.put(24, 'x');
+				}
+				break;
+			case 'y':
+				if (!(charMap2.containsKey(25))) {
+					charMap2.put(25, 'y');
+				}
+				break;
+			case 'z':
+				if (!(charMap2.containsKey(26))) {
+					charMap2.put(26, 'z');
+				}
+				break;
+			}
+			if (charMap1.equals(charMap2)) {
+				return true;
+			}
+
+		}
+
 		return false;
 	}
 
@@ -446,8 +1183,14 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		try {
+			LocalDateTime date = LocalDateTime.parse(given.toString());
+			return date.plusSeconds(1000000000);
+		} catch (Exception e) {
+			LocalDate today = LocalDate.parse(given.toString());
+			LocalDateTime now = today.atTime(0, 0, 0);
+			return now.plusSeconds(1000000000);
+		}
 	}
 
 	/**
@@ -505,8 +1248,43 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		String noSpace = string.replaceAll("\\s", "");
+		StringBuilder reverse = new StringBuilder();
+		reverse.append(noSpace);
+		reverse = reverse.reverse();
+		int numb = 0;
+		int numb2 = 0;
+		int total = 0;
+		int mod = 0;
+		
+		if(reverse.toString().contains("-")) {
+			return false;
+		}
+		else {
+			for(int i = 1; i < reverse.length(); i += 2) {
+				numb = Character.getNumericValue(noSpace.charAt(i));
+				numb2 = numb * 2;
+				if(numb2 > 9) {
+					numb2 = numb2 - 9;
+					total += numb2;
+				}
+				else{
+					total += numb2;
+				}
+			}
+			for(int i = 0; i < reverse.length(); i += 2) {
+				numb = Character.getNumericValue(noSpace.charAt(i));
+				total += numb;
+			}
+			System.out.println(total);
+			mod = total % 10;
+			if(mod == 0) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
 	}
 
 	/**
@@ -537,8 +1315,40 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int solveWordProblem(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
-	}
+		String string2 = string.replace("?", " ");
+		String[] wordProblem = string2.split(" ");
+		boolean isFilled = false;
+		int[] numbers = new int[2];
+		int sum = 0;
+		
+		for (int i = 0; i < wordProblem.length; i++) {
+			if (wordProblem[i].charAt(0) == '-' || Character.isDigit(wordProblem[i].charAt(0))) {
+				if (isFilled == false) {
+					numbers[0] = Integer.parseInt(wordProblem[i]);
+					isFilled = true;
+				}
+				if (isFilled == true) {
+					numbers[1] = Integer.parseInt(wordProblem[i]);
 
+				}
+
+			}
+
+		}
+		if (string.contains("plus")) {
+			sum = numbers[0] + numbers[1];
+		}
+		if (string.contains("minus")) {
+			sum = numbers[0] - numbers[1];
+		}
+		if (string.contains("multiplied")) {
+			sum = numbers[0] * numbers[1];
+		}
+		if (string.contains("divided")) {
+			sum = numbers[0] / numbers[1];
+		}
+		return sum;
+		
+	}
+	
 }
